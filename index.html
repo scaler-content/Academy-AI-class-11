@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Class 11 - Vibe Coding and Debugging</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbf9f5; --paper-2:#ffffff; --ink:#1a1a17; --ink-2:#4a4a42; --ink-3:#7a7a70;
+  --rule:#e3ded4; --rule-2:#d2cbbe;
+  --accent:#0f5e55; --accent-2:#0a4a43; --accent-soft:#e6f0ee;
+  --amber:#8a5a00; --amber-soft:#fdf3e0;
+  --violet:#54407f; --violet-soft:#efeaf8;
+  --rose:#8d3a46; --rose-soft:#fbecee;
+  --b1:#0f5e55; --b2:#c98a2e; --b3:#54407f; --b4:#8d3a46; --b5:#3a6b8c;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --serif:'Fraunces',Georgia,serif;
+  --shadow:0 1px 2px rgba(26,26,23,.05),0 8px 24px -12px rgba(26,26,23,.12);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#15171a; --paper-2:#1c1f23; --ink:#eceae4; --ink-2:#b4b2aa; --ink-3:#85837c;
+    --rule:#2b2f34; --rule-2:#3a3f45;
+    --accent:#5fc0b2; --accent-2:#8ad6c9; --accent-soft:#16302d;
+    --amber:#e0a94a; --amber-soft:#2e2515;
+    --violet:#b39ae8; --violet-soft:#241e33;
+    --rose:#e095a0; --rose-soft:#2e1c20;
+    --b1:#5fc0b2; --b2:#e0a94a; --b3:#b39ae8; --b4:#e095a0; --b5:#79b3d6;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#15171a; --paper-2:#1c1f23; --ink:#eceae4; --ink-2:#b4b2aa; --ink-3:#85837c;
+  --rule:#2b2f34; --rule-2:#3a3f45;
+  --accent:#5fc0b2; --accent-2:#8ad6c9; --accent-soft:#16302d;
+  --amber:#e0a94a; --amber-soft:#2e2515;
+  --violet:#b39ae8; --violet-soft:#241e33;
+  --rose:#e095a0; --rose-soft:#2e1c20;
+  --b1:#5fc0b2; --b2:#e0a94a; --b3:#b39ae8; --b4:#e095a0; --b5:#79b3d6;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:1.5rem}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- shell ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:230px 1fr;gap:48px}
+@media(max-width:940px){.shell{grid-template-columns:1fr;gap:0}}
+
+aside{
+  position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  padding:40px 0 60px;border-right:1px solid var(--rule);
+  font-size:13.5px;line-height:1.45;
+}
+@media(max-width:940px){aside{display:none}}
+aside .tocHead{font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+aside a{display:flex;gap:8px;align-items:baseline;justify-content:space-between;color:var(--ink-2);text-decoration:none;padding:5px 10px 5px 11px;border-left:2px solid transparent;margin-left:-1px}
+aside a:hover{color:var(--accent);background:var(--accent-soft)}
+aside a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+aside a .mins{flex:0 0 auto;color:var(--ink-3);font:500 11.5px var(--mono)}
+
+main{padding:40px 0 120px;min-width:0;max-width:760px}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:8px}
+.kicker{font:600 11px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.mast h1{
+  font-family:var(--serif);font-weight:600;font-size:clamp(2.1rem,5.4vw,3.3rem);
+  line-height:1.04;letter-spacing:-.02em;margin:0 0 16px;
+}
+.mast .meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--ink-2)}
+.mast .meta b{color:var(--ink);font-weight:600}
+.pill{
+  display:inline-block;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);
+  font:600 12px var(--sans);border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);
+}
+
+/* ---------- prose ---------- */
+h2{
+  font-family:var(--serif);font-weight:600;font-size:1.72rem;line-height:1.15;
+  letter-spacing:-.015em;margin:3.1rem 0 .3rem;padding-top:1.5rem;
+  border-top:1px solid var(--rule);
+}
+h2:first-of-type{border-top:0}
+h2 .secn{
+  display:block;font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;
+}
+h3{font-family:var(--sans);font-weight:650;font-size:1.13rem;letter-spacing:-.005em;margin:2.1rem 0 .4rem}
+h4{font-family:var(--sans);font-weight:650;font-size:1rem;margin:1.5rem 0 .3rem;color:var(--ink-2)}
+p{margin:.85em 0}
+main>p:first-of-type{font-size:1.04em}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+strong{font-weight:650}
+hr{border:0;border-top:1px solid var(--rule);margin:2.4rem 0}
+img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--rule);display:block;margin:1.4rem 0;background:var(--paper-2)}
+code{font-family:var(--mono);font-size:.875em;background:var(--paper-2);border:1px solid var(--rule);border-radius:4px;padding:.1em .35em}
+pre{
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:10px;
+  padding:16px 18px;overflow-x:auto;margin:1.4rem 0;box-shadow:var(--shadow);
+  max-width:100%;
+}
+#content{min-width:0}
+main>*,#content>*{min-width:0}
+pre code{background:none;border:0;padding:0;font-size:13.2px;line-height:1.6}
+
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:14.6px;display:block;overflow-x:auto}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{
+  font:600 11.5px var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);
+  border-bottom:1.5px solid var(--rule-2);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+td strong{color:var(--ink)}
+
+ul,ol{padding-left:1.3em;margin:.85em 0}
+li{margin:.3em 0}
+
+/* ---------- labels ---------- */
+.lbl{
+  margin:1.5rem 0;padding:13px 16px 13px 17px;border-radius:0 9px 9px 0;
+  border-left:3px solid var(--rule-2);background:var(--paper-2);font-size:15.5px;line-height:1.6;
+}
+.lbl .tag{
+  display:block;font:600 10.5px/1 var(--sans);letter-spacing:.13em;text-transform:uppercase;
+  margin-bottom:7px;
+}
+.lbl.instructor{border-left-color:var(--violet);background:var(--violet-soft)}
+.lbl.instructor .tag{color:var(--violet)}
+.lbl.ask{border-left-color:var(--accent);background:var(--accent-soft)}
+.lbl.ask .tag{color:var(--accent)}
+.lbl.important{border-left-color:var(--amber);background:var(--amber-soft)}
+.lbl.important .tag{color:var(--amber)}
+.lbl.doubt{border-left-color:var(--b5);background:color-mix(in srgb,var(--b5) 10%,transparent)}
+.lbl.doubt .tag{color:var(--b5)}
+.lbl.question{border-left-color:var(--rose);background:var(--rose-soft)}
+.lbl.question .tag{color:var(--rose)}
+.step{
+  display:flex;gap:13px;margin:.7rem 0;padding:11px 14px;background:var(--paper-2);
+  border:1px solid var(--rule);border-radius:9px;font-size:15.5px;
+}
+.step .n{
+  flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--paper-2);
+  display:grid;place-items:center;font:600 13px var(--mono);
+}
+:root[data-theme="dark"] .step .n,
+html:not([data-theme="light"]) .step .n{color:#0d1114}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .step .n{color:#fff}}
+.step .body{flex:1;min-width:0}
+
+/* ---------- quiz ---------- */
+.quiz{
+  margin:2.2rem 0;border:1px solid var(--rule-2);border-radius:13px;overflow:hidden;
+  background:var(--paper-2);box-shadow:var(--shadow);
+}
+.quiz .qhead{
+  display:flex;align-items:center;gap:10px;padding:13px 18px;
+  border-bottom:1px solid var(--rule);background:color-mix(in srgb,var(--accent) 7%,transparent);
+}
+.quiz .qnum{font:600 11px var(--sans);letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+.quiz .qbody{padding:16px 18px 18px}
+.quiz .qtext{font-weight:600;margin:0 0 14px;font-size:16.5px;line-height:1.5}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+  padding:11px 14px;margin:7px 0;border:1px solid var(--rule);border-radius:9px;
+  background:var(--paper);color:var(--ink);font:400 15.5px/1.5 var(--sans);cursor:pointer;
+  transition:border-color .12s,background .12s;
+}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt:disabled{cursor:default}
+.opt .k{
+  flex:0 0 auto;width:23px;height:23px;border-radius:5px;border:1px solid var(--rule-2);
+  display:grid;place-items:center;font:600 12.5px var(--mono);color:var(--ink-2);background:var(--paper-2);
+}
+.opt.right{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right .k{background:var(--accent);border-color:var(--accent);color:var(--paper-2)}
+.opt.wrong{border-color:var(--rose);background:var(--rose-soft)}
+.opt.wrong .k{background:var(--rose);border-color:var(--rose);color:var(--paper-2)}
+.verdict{margin:14px 0 0;padding:13px 15px;border-radius:9px;font-size:15px;line-height:1.6;display:none}
+.verdict.show{display:block}
+.verdict .vt{font-weight:650;display:block;margin-bottom:5px}
+.verdict.ok{background:var(--accent-soft);border-left:3px solid var(--accent)}
+.verdict.no{background:var(--rose-soft);border-left:3px solid var(--rose)}
+
+/* ---------- visualizers ---------- */
+.viz{
+  margin:2.3rem 0;border:1px solid var(--rule-2);border-radius:13px;background:var(--paper-2);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.viz .vhead{padding:14px 18px 12px;border-bottom:1px solid var(--rule)}
+.viz .vk{font:600 10.5px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--b2);margin-bottom:7px}
+.viz .vhead h4{margin:0;font-size:1.05rem;color:var(--ink);font-weight:650}
+.viz .vhead p{margin:5px 0 0;font-size:14px;color:var(--ink-2)}
+.viz .vbody{padding:17px 18px 20px}
+.ctl{display:grid;gap:14px;margin-bottom:17px}
+.ctl.two{grid-template-columns:1fr 1fr}
+.ctl.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:620px){.ctl.two,.ctl.three{grid-template-columns:1fr}}
+.ctl label{display:block;font:600 12px var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.ctl label .v{float:right;text-transform:none;letter-spacing:0;font-family:var(--mono);color:var(--accent);font-size:12.5px}
+input[type=range]{width:100%;accent-color:var(--accent);height:22px}
+textarea,select,input[type=number]{
+  width:100%;font-family:var(--mono);font-size:13.5px;padding:9px 11px;
+  border:1px solid var(--rule-2);border-radius:8px;background:var(--paper);color:var(--ink);
+}
+textarea{resize:vertical;min-height:74px;line-height:1.55}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{
+  padding:6px 12px;border:1px solid var(--rule-2);border-radius:7px;background:var(--paper);
+  color:var(--ink-2);font:500 13px var(--sans);cursor:pointer;
+}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--paper-2);font-weight:600}
+
+.toks{display:flex;flex-wrap:wrap;gap:3px;padding:13px;background:var(--paper);border:1px solid var(--rule);border-radius:9px;min-height:54px;align-content:flex-start}
+.tok{font-family:var(--mono);font-size:13px;padding:2px 5px;border-radius:4px;white-space:pre;border:1px solid transparent}
+.tok.c0{background:color-mix(in srgb,var(--b1) 17%,transparent);border-color:color-mix(in srgb,var(--b1) 35%,transparent)}
+.tok.c1{background:color-mix(in srgb,var(--b2) 17%,transparent);border-color:color-mix(in srgb,var(--b2) 35%,transparent)}
+.tok.c2{background:color-mix(in srgb,var(--b3) 17%,transparent);border-color:color-mix(in srgb,var(--b3) 35%,transparent)}
+.tok.c3{background:color-mix(in srgb,var(--b4) 17%,transparent);border-color:color-mix(in srgb,var(--b4) 35%,transparent)}
+.tok.c4{background:color-mix(in srgb,var(--b5) 17%,transparent);border-color:color-mix(in srgb,var(--b5) 35%,transparent)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;margin-top:15px;background:var(--rule);border:1px solid var(--rule);border-radius:9px;overflow:hidden}
+.stat{background:var(--paper-2);padding:11px 13px}
+.stat .sl{font:600 10.5px var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+.stat .sv{font:600 1.22rem/1.15 var(--mono);color:var(--ink);letter-spacing:-.01em}
+.stat .sv.a{color:var(--accent)}
+.stat .sv.w{color:var(--amber)}
+.stat .sn{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+
+.bars{display:grid;gap:9px;margin-top:4px}
+.bar{display:grid;grid-template-columns:132px 1fr auto;gap:11px;align-items:center;font-size:13.5px}
+@media(max-width:560px){.bar{grid-template-columns:96px 1fr auto;gap:8px;font-size:12.5px}}
+.bar .bl{color:var(--ink-2);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .bt{height:17px;background:color-mix(in srgb,var(--ink) 7%,transparent);border-radius:4px;overflow:hidden}
+.bar .bf{height:100%;border-radius:4px;transition:width .22s ease}
+.bar .bv{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);min-width:52px;text-align:right}
+.bar.hi .bl{color:var(--ink);font-weight:650}
+
+.note{margin-top:15px;padding-top:13px;border-top:1px dashed var(--rule-2);font-size:13.5px;color:var(--ink-3);line-height:1.55}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+.theme{
+  position:fixed;right:16px;bottom:16px;z-index:50;
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--rule-2);
+  background:var(--paper-2);color:var(--ink-2);cursor:pointer;box-shadow:var(--shadow);
+  font-size:17px;line-height:1;display:grid;place-items:center;
+}
+.theme:hover{color:var(--accent);border-color:var(--accent)}
+.endnote{margin-top:4rem;padding-top:1.3rem;border-top:2px solid var(--ink);font-size:13.5px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside><div class="tocHead">On this page</div><nav id="toc"></nav></aside>
+  <main>
+    <header class="mast">
+      <div class="kicker">AI and Agents &middot; Academy Advanced</div>
+      <h1>Vibe Coding and Debugging: Spec, Checkpoint, Review</h1>
+      <div class="meta">
+        <span><b>Class 11</b> of 12</span>
+        <span class="pill">112 min + 8 min buffer</span>
+        <span>5 in-class quizzes</span>
+        <span>Build and debug a Trip Splitter web app with an AI editor, using three habits: spec first, checkpoint every change, review with tests.</span>
+      </div>
+    </header>
+    <div id="content"><h2 id="agenda" data-label="Agenda">Agenda</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Section</th>
+<th>Minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Vibe coding, and the three habits</td>
+<td>9</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Set up: editor, project folder, Git</td>
+<td>10</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Spec first: ask for the Trip Splitter</td>
+<td>14</td>
+</tr>
+<tr>
+<td></td>
+<td>Quiz 1</td>
+<td>3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Find the bugs by testing, not by reading</td>
+<td>16</td>
+</tr>
+<tr>
+<td></td>
+<td>Quiz 2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Fix one bug at a time, with checkpoints</td>
+<td>20</td>
+</tr>
+<tr>
+<td></td>
+<td>Quiz 3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>The quick security check</td>
+<td>11</td>
+</tr>
+<tr>
+<td></td>
+<td>Quiz 4</td>
+<td>3</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Let an AI review it, then check the reviewer</td>
+<td>8</td>
+</tr>
+<tr>
+<td></td>
+<td>Quiz 5</td>
+<td>3</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Your turn and wrap-up</td>
+<td>9</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>Total</strong></td>
+<td><strong>112</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>This class has one build, a web app called Trip Splitter. Friends on a trip add what each person paid, and the app shows who owes whom. It is a single HTML file that opens in a browser, so learners see results in seconds. The class teaches three habits for working with an AI that writes code: write a spec first, commit a checkpoint before every change, and review the result with a checklist and with tests.</div>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>What changed from the previous version, and why. This list is here so nothing in the class surprises you.</div>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>Now</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A command-line expense tracker, then a command-line contest leaderboard</td>
+<td>One web app, Trip Splitter</td>
+<td>Learners found the command line unengaging, and a vibe-coding class should build a visible UI</td>
+</tr>
+<tr>
+<td>Bugs appeared only if the AI wrote them</td>
+<td>The class copy of the app has six planted bugs that always appear</td>
+<td>Current AI often writes clean code, so a demo that needs it to fail on cue does not hold</td>
+</tr>
+<tr>
+<td>Quizzes asked about what the AI got wrong</td>
+<td>Quizzes show a symptom or a snippet and ask about the idea</td>
+<td>A quiz must still make sense when the AI behaves well</td>
+</tr>
+<tr>
+<td>Finished fix prompts shown to learners</td>
+<td>One fix at a time: failure, fix, test, checkpoint</td>
+<td>Learners build the habit, not just see the result</td>
+</tr>
+<tr>
+<td>Five-item checklist, including brute force against prefix sum</td>
+<td>Six-item checklist: inputs, money, ties, missing data, untrusted text, secrets</td>
+<td>Speed bugs are not visible in a small web app. The security items were asked for</td>
+</tr>
+<tr>
+<td>No spec, Git or security content</td>
+<td>Added: spec-first prompting, Git checkpoints, a quick security check</td>
+<td>Requested in the instructor feedback</td>
+</tr>
+</tbody>
+</table>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>The previous Section on performance (a slow loop fixed with a prefix sum, a sliding window) was removed. It does not show up in a page this size, and the time now goes to the three habits. If you want it back, it fits as a stretch task after Section 8.</div>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>What was checked and what was not. The class copy and a fully fixed reference copy were run in a real Chromium browser on 17 November 2026 with scripted tests. That confirmed: each of the six planted bugs appears every time, the reference copy passes every test, the happy path (90 split three ways) works in both, and the quick one-line rounding fix in Section 5 does not remove the 0.01 error. It did not confirm: how Cursor or Copilot behave live, what an AI reviewer will report about the file, the exact wording of Cursor's buttons and shortcuts, or the exact free-plan limits, which come from third-party summaries and the GitHub docs. The class never depends on the AI behaving a certain way: the bugs are in the file you hand out, and every check is a test you run yourself. Do one full dry run the day before. It takes about 25 minutes.</div>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>Pre-class homework, posted two days ahead. One: install Cursor and create a free account. No card is asked on the Hobby plan, according to a third-party summary, so check at sign-up and tell learners. Two: install Git. Mac and Linux usually have it, and Windows needs the installer from git-scm.com. Three: confirm <code>git --version</code> works in a terminal. A learner who cannot install anything can still follow the review and testing parts by pasting the file into a free chat assistant and editing in a plain text editor. Offer them a pair seat.</div>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>Dry-run checklist, 25 minutes. One, run <code>python instructor_check.py trip_splitter.html</code> and confirm all six bugs show as present. Two, run it on <code>trip_splitter_reference.html</code> and confirm all six show as absent. Three, in your editor, ask the AI for the Trip Splitter from the spec in Section 3 and note what it does. Whatever it does, the rest of the class still works. Four, run Section 5 once with Git, including the revert. Five, paste the Section 7 reviewer prompt into your AI and see which of the six it reports. Six, read the fast-changing facts at the end and fix anything that moved.</div>
+<p>Dataset link — Three files, shared in the class channel before class.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>trip_splitter.html</td>
+<td>The class copy of the app, with six planted bugs. Every learner reviews this same file.</td>
+</tr>
+<tr>
+<td>trip_splitter_reference.html</td>
+<td>The same app with all six fixed. For instructors, and for anyone who falls behind.</td>
+</tr>
+<tr>
+<td>instructor_check.py</td>
+<td>A short script that tests both files in a browser and prints which bugs are present. For your dry run.</td>
+</tr>
+</tbody>
+</table>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>Cursor's free Hobby plan gives a limited number of AI requests a month, and Cursor does not publish the exact number. Ask learners to use the AI only for the prompts in this script, so nobody runs out halfway through. If someone hits the limit, they can switch to VS Code with GitHub Copilot Free, which has its own monthly allowance, and carry on from the same folder.</div>
+<h2 id="section-1" data-label="Vibe coding, and the three habits" data-mins="9"><span class="secn">Section 1 &middot; 9 min</span>Vibe coding, and the three habits</h2>
+<p>Vibe coding means you describe what you want, and an AI writes the code. You steer. It types.</p>
+<p>It is fast. A working app in two minutes is normal now. And that is exactly the risk. The app looks fine, so you trust it, and the problems hide in the cases nobody tried.</p>
+<p>A useful way to think about it: the AI is a very fast junior developer. It knows the syntax. It does not know your rules. Every rule you did not say, it guesses.</p>
+<p>So the skill in this class is not typing prompts. It is three habits.</p>
+<table>
+<thead>
+<tr>
+<th>Habit</th>
+<th>What it protects you from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spec first</td>
+<td>The AI guessing rules you never stated</td>
+</tr>
+<tr>
+<td>Checkpoint before every change</td>
+<td>A fix that breaks something that worked</td>
+</tr>
+<tr>
+<td>Review with a checklist, and test</td>
+<td>Code that looks right and is not</td>
+</tr>
+</tbody>
+</table>
+<p>Use the visualizer below. Switch between a vague prompt and a spec, and see which decisions you made and which the AI guessed.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>Think of the last app you built or used that had a small bug in it. Which rule did nobody write down?</div>
+<p>Most real bugs are not clever. They are a rule that lived in someone's head. A spec is where those rules go.</p>
+<div class="lbl important"><span class="tag">Important</span>Today the bugs are not left to chance. The app you will review has six planted problems that always appear, so every learner sees the same thing, whatever their AI does. You will also use the AI as a reviewer and check what it reports.</div>
+<h2 id="section-2" data-label="Set up: editor, project folder, Git" data-mins="10"><span class="secn">Section 2 &middot; 10 min</span>Set up: editor, project folder, Git</h2>
+<div class="lbl important"><span class="tag">Note</span>Cursor is a code editor with an AI built in. It looks like VS Code, because it is built on it. Its menus and shortcuts change often, so if something below is named slightly differently on your screen, look in the menus.</div>
+<p>Step 1 - Open Cursor and sign in with the free account.</p>
+<p>Step 2 - Create a new folder called <code>trip-splitter</code> on your computer, and open that folder in Cursor with File, then Open Folder.</p>
+<p>Step 3 - Open the terminal inside Cursor. It is under the Terminal menu. Check that Git is installed.</p>
+<pre><code>git --version
+</code></pre>
+<p>Step 4 - Tell Git who you are. This is needed once per computer. Use your own name and email.</p>
+<pre><code>git config --global user.name &quot;Your Name&quot;
+git config --global user.email &quot;you@example.com&quot;
+</code></pre>
+<p>Step 5 - Start Git in the folder.</p>
+<pre><code>git init
+</code></pre>
+<h3>What a checkpoint is</h3>
+<p>Git keeps a history of your project. Each saved point in that history is a commit. Think of it as a save point in a game. You save before a risky move, and if the move goes wrong, you load the save.</p>
+<p>Three commands are enough for today.</p>
+<pre><code>git add -A
+git commit -m &quot;describe what you just did&quot;
+git log --oneline
+</code></pre>
+<p>The first line stages every changed file. The second saves a checkpoint with a message. The third lists your checkpoints, newest first.</p>
+<p>Two more let you look and undo.</p>
+<pre><code>git diff
+git restore .
+</code></pre>
+<p><code>git diff</code> shows exactly what changed since your last checkpoint. <code>git restore .</code> throws away changes you have not committed and returns the files to the last checkpoint.</p>
+<p>Use the visualizer below. Commit a change that works, then one that breaks, and see what the history looks like.</p>
+<div class="lbl important"><span class="tag">Important</span>The habit is: checkpoint, then ask the AI, then test, then keep or undo. Never ask the AI to change a working file before you have a checkpoint.</div>
+<div class="lbl doubt"><span class="tag">Doubt by Learner</span>"Cursor already shows me the changes and has an Undo button. Why do I need Git?"</div>
+<p>The editor's undo is for the last few edits. Git is a named history you can return to a day later, compare against, and share. Also, AI tools can change several files in one go, and a checkpoint makes the whole change easy to review and reverse.</p>
+<div class="lbl important"><span class="tag">Disclaimer</span>Cursor's free Hobby plan has limited AI requests each month, and the limits and the available models can change. Check cursor.com/pricing, or the usage page in your account, before you teach.</div>
+<h2 id="section-3" data-label="Spec first: ask for the Trip Splitter" data-mins="14"><span class="secn">Section 3 &middot; 14 min</span>Spec first: ask for the Trip Splitter</h2>
+<p>A spec is a short written description of what you want, with the rules. We will give the AI the same request twice, once vague and once with a spec, and compare what each one decided for us.</p>
+<p>Step 1 - Open the AI panel in Cursor and set it to Agent mode, so it can create files in your folder. The shortcut is usually Cmd+I on Mac or Ctrl+I on Windows, but check the menu if it differs.</p>
+<p>Step 2 - First the vague one. Send this.</p>
+<pre><code>Make me a trip expense splitter web app.
+</code></pre>
+<p>Step 3 - Open the file it makes in a browser. Add two people, add an expense, and look at the result. Do not fix anything. Just note what it did.</p>
+<p>Step 4 - Now go back to your last checkpoint, so the folder is clean. If you have not committed yet, delete the files the AI made. Then send the spec version.</p>
+<pre><code>Build a single-file web app, trip_splitter.html, with no libraries.
+Users: friends on a trip. Every expense is split equally between everyone.
+Features: add and remove people; add an expense (what it was for, amount, who paid); show the total, each person's balance, and who pays whom.
+Rules: amounts are rupees with 2 decimals; reject empty names, duplicate names, and amounts that are not greater than 0; the shares must add up to the total to the paisa.
+Safety: never insert user text into the page as HTML; keep no keys or secrets in the file.
+Done when: the net of all balances shows 0.00 for any split.
+</code></pre>
+<p>Step 5 - Open that file in the browser, and try the same things. Then try three more: an empty amount, a negative amount, and splitting 100 between three people.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>Which version made more of the rules, and which rules did you have to discover by trying?</div>
+<p>Whatever your two apps did, the point is the same. The spec turned rules you would have had to discover into rules you can check. The last line, Done when, is the most useful, because it is a test you can run in ten seconds.</p>
+<div class="lbl important"><span class="tag">Important</span>The spec made the checks possible. It did not make the code perfect. A spec does not remove testing. It tells you what to test.</div>
+<h3>Switch to the class copy</h3>
+<p>Your AI's app is different from your neighbour's, and different again from mine. We cannot review the same code that way. So we all switch to one shared file.</p>
+<p>Step 6 - Download <code>trip_splitter.html</code> from the class channel into your project folder. If you made your own <code>trip_splitter.html</code>, rename yours first so you keep it.</p>
+<p>Step 7 - Open it in the browser. Add three people and an expense, to see that it works.</p>
+<p>Step 8 - Make your first checkpoint.</p>
+<pre><code>git add -A
+git commit -m &quot;Class copy of Trip Splitter&quot;
+</code></pre>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>Some learners will get a clean app from the vague prompt, and some will get one with problems. Both are fine. If a learner says "mine had no bugs", agree, and say that is exactly why the class gives everyone a copy with known ones. Do not tell the class the vague prompt always produces a worse app.</div>
+<div class="lbl doubt"><span class="tag">Doubt by Learner</span>"If the AI can write a spec-quality app, why do I need to review it?"</div>
+<p>Because the AI is checking against what it understood, and you are checking against what you meant. A good spec narrows the gap. It does not close it.</p>
+<section class="quiz" data-ans="B" data-exp="An AI fills every gap in a request with a guess. Whether it guesses a rule is not guaranteed in either direction, which is why the rule has to be written down and then tested. A short prompt does not always produce this behaviour, and an AI can validate input perfectly well."><div class="qhead"><span class="qnum">In-class quiz 1</span></div><div class="qbody"><p class="qtext">You ask an AI for a trip expense splitter in one short sentence. The app accepts a negative amount. Which statement is accurate?</p><div class="opts"><button class="opt" data-k="A"><span class="k">A</span><span>The AI made a mistake, because a negative amount is always invalid in any app</span></button><button class="opt" data-k="B"><span class="k">B</span><span>The rule was never stated, so the AI guessed</span></button><button class="opt" data-k="C"><span class="k">C</span><span>Any app built from a short prompt will accept negative numbers</span></button><button class="opt" data-k="D"><span class="k">D</span><span>The AI is unable to validate input in a single HTML file</span></button></div><div class="verdict"><span class="vt"></span> <span class="vx"></span></div></div></section>
+<h2 id="section-4" data-label="Find the bugs by testing, not by reading" data-mins="16"><span class="secn">Section 4 &middot; 16 min</span>Find the bugs by testing, not by reading</h2>
+<p>Reading code you did not write is slow, and the bugs are not on the surface. A faster way: try to break it. Give it the inputs a real user would eventually type.</p>
+<p>Here is a test sheet. Run each test on the class copy and write down what you see.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Do this</th>
+<th>A correct app would</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Add one person, Asha. Add an expense with the amount left empty.</td>
+<td>Refuse, and say why</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Add one person, Asha. Add an expense of -500.</td>
+<td>Refuse, and say why</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Click Add person with the name left empty. Then add Asha twice.</td>
+<td>Refuse both</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Add Asha, Rohan, Meera. Asha pays 100. Read the line under Summary that says Net of all balances.</td>
+<td>Show 0.00</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Add Asha and Rohan. Asha pays 500. Rohan pays 500. Read Top spender.</td>
+<td>Name both</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Add Asha and Meera. Meera pays 100. Remove Meera.</td>
+<td>Not break</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Add a person named <code>&lt;img src=x onerror="document.body.style.background='tomato'"&gt;</code></td>
+<td>Show the text as it is</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Open the file in your editor, and search it for <code>sk_</code>.</td>
+<td>Find nothing</td>
+</tr>
+</tbody>
+</table>
+<p>Use the visualizer below. Pick a test and compare what the class copy does with what a correct app does.</p>
+<p>Step 1 - Run tests 1 to 3 together. They are all about what the app lets in.</p>
+<p>Step 2 - Run test 4. Read the Net line. It says 0.01, and it should say 0.00. The app lost a paisa. Nobody typed a wrong number. The error is in how the money is divided.</p>
+<p>Step 3 - Run tests 5 and 6.</p>
+<p>Step 4 - Run tests 7 and 8. Test 7 turns the whole page red, which is harmless here. But the page ran text a user typed as if it were part of the app. Test 8 finds a key in the file.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>Which of these could you have found by reading the code carefully, and which only by running it?</div>
+<p>Some you could read. The 0.01 you almost certainly would not, because the code looks sensible. This is why the test sheet comes before the reading.</p>
+<div class="lbl important"><span class="tag">Important</span>Each test maps to one question in your reviewer's checklist. Keep this table. It is the checklist you will use from now on.</div>
+<table>
+<thead>
+<tr>
+<th>Question to ask of AI-written code</th>
+<th>Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Are bad inputs rejected: empty, negative, zero, duplicate?</td>
+<td>1, 2, 3</td>
+</tr>
+<tr>
+<td>Does the money add up to the paisa?</td>
+<td>4</td>
+</tr>
+<tr>
+<td>What happens in a tie?</td>
+<td>5</td>
+</tr>
+<tr>
+<td>What happens when data is missing or removed?</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Is any user text put into the page as HTML?</td>
+<td>7</td>
+</tr>
+<tr>
+<td>Is any secret in the file?</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<div class="lbl doubt"><span class="tag">Doubt by Learner</span>"Is the 0.01 a floating point bug? I heard computers cannot add decimals."</div>
+<p>It is related, but it is not the whole story. The code also rounds each person's balance on its own, and three rounded thirds do not add back up to one whole. Even with perfect decimals, you would still have to decide who gets the extra paisa. That decision is one the AI cannot make for you.</p>
+<section class="quiz" data-ans="D" data-exp="The inputs were valid and nothing was missing. The error comes from splitting an amount that does not divide evenly and rounding each share on its own. That is the money category, and it needs a rule for the leftover paisa."><div class="qhead"><span class="qnum">In-class quiz 2</span></div><div class="qbody"><p class="qtext">A tester splits 100 rupees between three friends. The balances shown on screen add up to 0.01 more than they should. Which category is this?</p><div class="opts"><button class="opt" data-k="A"><span class="k">A</span><span>Input validation, because the amount typed was never checked before use</span></button><button class="opt" data-k="B"><span class="k">B</span><span>Missing data, because one person has no expense recorded yet</span></button><button class="opt" data-k="C"><span class="k">C</span><span>Untrusted text, because a name contained a symbol the page misread</span></button><button class="opt" data-k="D"><span class="k">D</span><span>Money arithmetic, because the shares were rounded one by one</span></button></div><div class="verdict"><span class="vt"></span> <span class="vx"></span></div></div></section>
+<h2 id="section-5" data-label="Fix one bug at a time, with checkpoints" data-mins="20"><span class="secn">Section 5 &middot; 20 min</span>Fix one bug at a time, with checkpoints</h2>
+<p>We fix one bug, test, and checkpoint, then move on. Never ask the AI to fix everything at once: you cannot tell which change did what.</p>
+<p>A good bug report to the AI has four parts: what you did, what you expected, what happened, and what to leave alone. Compare these two.</p>
+<p>A weak one:</p>
+<pre><code>It does not work with money. Fix it.
+</code></pre>
+<p>A strong one:</p>
+<pre><code>In trip_splitter.html, when I add an expense with the amount left empty, the summary shows &quot;Total spent: NaN&quot;.
+Expected: the app refuses the expense and shows a short message.
+Change only the add-expense and add-person code. Do not touch how balances are calculated.
+</code></pre>
+<h3>Fix 1: what the app lets in</h3>
+<p>Step 1 - Send this to the AI. Make sure you are on a clean checkpoint first.</p>
+<pre><code>In trip_splitter.html, three things are accepted that should not be: an empty amount (the total becomes NaN), a negative amount, and an empty or duplicate person name.
+Expected: the app refuses each one and shows a short message on the page. Duplicate names should be compared ignoring capital letters.
+Also refuse an expense when there are no people.
+Change only the add-person and add-expense code. Leave the balance calculation alone.
+</code></pre>
+<p>Step 2 - Run tests 1 to 3 again. Then run test 4 to check the rest still works.</p>
+<p>Step 3 - Read the change with <code>git diff</code>, and then checkpoint.</p>
+<pre><code>git add -A
+git commit -m &quot;Reject bad names and amounts&quot;
+</code></pre>
+<h3>Fix 2: the money, and a fix that does not work</h3>
+<p>The 0.01 problem has an obvious fix. Many people, and many AIs, reach for it first. Try it by hand.</p>
+<p>Step 4 - In <code>trip_splitter.html</code>, find this line.</p>
+<pre><code>const share = total / members.length;
+</code></pre>
+<p>Step 5 - Change it to round the share to two decimals.</p>
+<pre><code>const share = Math.round((total / members.length) * 100) / 100;
+</code></pre>
+<p>Step 6 - Run test 4 again and read the Net line.</p>
+<p>It still says 0.01. Each person's share is now a tidy 33.33, but three of them make 99.99, and the app still thinks the total is 100.00.</p>
+<p>Step 7 - Undo the failed fix. You have not committed it, so this returns the file to your last checkpoint.</p>
+<pre><code>git restore .
+</code></pre>
+<div class="lbl important"><span class="tag">Important</span>This is why we checkpoint. You tried a plausible fix, it did not work, and one command undid it. Without the checkpoint you would be trying to remember what the file used to look like.</div>
+<p>Step 8 - Now the real fix. Notice that it needs a decision only you can make: when 100 does not divide by 3, who pays the extra paisa? We decide that the first people in the list do. Send this.</p>
+<pre><code>In trip_splitter.html, splitting 100 rupees between 3 people makes &quot;Net of all balances&quot; show 0.01 instead of 0.00.
+Expected: the shares always add up to the total exactly.
+Store every amount as a whole number of paise, never as a decimal. Split the total in paise. When it does not divide evenly, the first people in the list pay one extra paisa each.
+Change only the money code. Keep the page layout and messages as they are.
+</code></pre>
+<p>Step 9 - Run test 4 again. The Net line should say 0.00. Then try 10 split between three, and 0.07 split between three.</p>
+<p>Step 10 - Checkpoint.</p>
+<pre><code>git add -A
+git commit -m &quot;Split money in whole paise&quot;
+</code></pre>
+<p>Use the visualizer below. Set a total and a head count, and compare rounding each share against splitting in paise.</p>
+<h3>Fix 3: ties</h3>
+<p>Step 11 - Send this.</p>
+<pre><code>In trip_splitter.html, &quot;Top spender&quot; shows only one name when two people paid the same highest amount.
+Expected: it names everyone who is tied, joined with &quot;and&quot;. If nobody has paid anything, show nothing.
+Change only the top spender code.
+</code></pre>
+<p>Step 12 - Run test 5. Checkpoint with a message of your own.</p>
+<h3>Fix 4: missing data</h3>
+<p>Step 13 - Look at test 6 again. Removing a person who paid breaks the page. There is more than one correct fix, and it is your call. The app could refuse the removal, or hand the person's expenses to someone else, or delete them. We choose the simplest: refuse. Send this.</p>
+<pre><code>In trip_splitter.html, removing a person who has paid for something makes the page stop working.
+Expected: the app refuses to remove that person and shows a short message saying why. Removing a person with no expenses still works.
+Change only the remove-person code.
+</code></pre>
+<p>Step 14 - Run test 6, then check that removing a person with no expenses still works. Checkpoint.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>In Fix 2 and Fix 4, the AI could not have known the right answer. Why?</div>
+<p>Because each had two or more correct answers, and the choice depended on what you want the app to do. The AI can write either. Only you can pick one. This is the part of the job that does not go away.</p>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>If time is short, demo Fixes 3 and 4 on screen and let learners do Fixes 1 and 2. Fix 2 is the one that matters most, because it contains the failed fix and the revert.</div>
+<div class="lbl doubt"><span class="tag">Doubt by Learner (Optional)</span>"What if the AI's fix breaks something else?"</div>
+<p>That is what the checkpoint and the other tests are for. After every fix, rerun the whole sheet, not only the test for that bug. If something that used to pass now fails, <code>git restore .</code> takes you back, and <code>git diff</code> shows what the AI touched.</p>
+<section class="quiz" data-ans="A" data-exp="Three equal rounded shares of a total that does not divide by three cannot sum back to the total. The fix is to split in whole paise and decide where the leftover goes. A one-paisa gap is exactly the kind that grows in real accounting, the browser is not at fault, and a person can make the fix."><div class="qhead"><span class="qnum">In-class quiz 3</span></div><div class="qbody"><p class="qtext">You change one line to round each share to two decimals, and the Net line still shows 0.01. What is the right conclusion?</p><div class="opts"><button class="opt" data-k="A"><span class="k">A</span><span>Rounding each share cannot make the shares add up, so the split itself must change</span></button><button class="opt" data-k="B"><span class="k">B</span><span>The test is too strict, because one paisa is too small to matter in practice</span></button><button class="opt" data-k="C"><span class="k">C</span><span>Only the AI can fix money bugs, so a person should stop here and wait</span></button><button class="opt" data-k="D"><span class="k">D</span><span>The browser is displaying decimals wrongly, so a different browser is needed to confirm</span></button></div><div class="verdict"><span class="vt"></span> <span class="vx"></span></div></div></section>
+<h2 id="section-6" data-label="The quick security check" data-mins="11"><span class="secn">Section 6 &middot; 11 min</span>The quick security check</h2>
+<p>Two problems are left, and they are the ones that cause real damage.</p>
+<h3>Untrusted text</h3>
+<p>Step 1 - Look at test 7 again. The name you typed was not shown as a name. The browser read it as part of the page and built an image from it, and ran the code in its <code>onerror</code>. Here that code only turns the background red. In a real app, the same hole lets a stranger's text read other users' data.</p>
+<p>The cause is one habit in the code: user text is put into the page as HTML. Find it.</p>
+<pre><code>$(&quot;members&quot;).innerHTML = members.map(...)
+</code></pre>
+<p>Step 2 - Send this to the AI.</p>
+<pre><code>In trip_splitter.html, names and expense descriptions are put into the page as HTML, so a name like &lt;img src=x onerror=&quot;...&quot;&gt; runs as code.
+Expected: any user text is shown exactly as typed and never treated as HTML. Do this everywhere user text is shown: people, the pay-by list, expenses, balances and the settle-up lines.
+Change only how text is placed into the page.
+</code></pre>
+<p>Step 3 - Run test 7 again. The page should stay white, and the odd name should appear as plain text. Checkpoint.</p>
+<p>Use the visualizer below. Type a name and compare how the buggy and fixed versions treat it.</p>
+<div class="lbl important"><span class="tag">Important</span>The rule is short. Text from a user is data, never markup. Whenever AI code puts user text into a page, a query or a command, ask how it keeps that text as data.</div>
+<h3>Secrets</h3>
+<p>Step 4 - Run test 8. The file has this near the top.</p>
+<pre><code>const API_KEY = &quot;sk_demo_not_a_real_key_1234&quot;;
+</code></pre>
+<p>This one is a harmless fake. But AI tools often write real keys into files because you pasted one into the chat, or because it is the quickest way to make the code run. A file that reaches GitHub or a browser publishes the key to everyone.</p>
+<p>Step 5 - Send this.</p>
+<pre><code>In trip_splitter.html, there is an API key written in the file. Remove it, and add a comment saying keys belong on a server, not in this file. Nothing else in the file should change.
+</code></pre>
+<p>Step 6 - Run test 8 again. Search the file for <code>sk_</code> and find nothing. Checkpoint.</p>
+<div class="lbl important"><span class="tag">Disclaimer</span>Never paste a real key into an AI chat or into a file you will share. If you ever do, treat the key as leaked, and create a new one in the provider's settings. Removing it from the file does not undo that.</div>
+<div class="lbl doubt"><span class="tag">Doubt by Learner</span>"If the key is only in a front-end file and I never publish it, is it safe?"</div>
+<p>Safer, not safe. Anything in a file that runs in a browser can be read by whoever opens that page. Real keys belong on a server, which Class 12 builds.</p>
+<section class="quiz" data-ans="C" data-exp="Text typed by a user must be treated as data. If the code inserts it as markup, the browser interprets it, tags and scripts included. A length limit would not stop a short payload, and the browser and the list size are not the cause."><div class="qhead"><span class="qnum">In-class quiz 4</span></div><div class="qbody"><p class="qtext">A user types a name containing an HTML tag, and the page builds and runs it. What is the root cause?</p><div class="opts"><button class="opt" data-k="A"><span class="k">A</span><span>The browser trusts every name it is given without any checks at all</span></button><button class="opt" data-k="B"><span class="k">B</span><span>The name field has no maximum length set on it, so long input passes</span></button><button class="opt" data-k="C"><span class="k">C</span><span>The app puts user text into the page as HTML, not as plain text</span></button><button class="opt" data-k="D"><span class="k">D</span><span>The app keeps too many names stored together in one single list</span></button></div><div class="verdict"><span class="vt"></span> <span class="vx"></span></div></div></section>
+<h2 id="section-7" data-label="Let an AI review it, then check the reviewer" data-mins="8"><span class="secn">Section 7 &middot; 8 min</span>Let an AI review it, then check the reviewer</h2>
+<p>So far you found the bugs by testing. Now try the AI as a reviewer, because reviewing is something it is fast at. The key is to ask it to report only, and not to fix.</p>
+<p>Step 1 - Download a fresh copy of <code>trip_splitter.html</code> from the class channel and save it as <code>review_copy.html</code>, so the AI sees the original problems and not your fixes.</p>
+<p>Step 2 - Open the AI chat, attach <code>review_copy.html</code>, and send this. Change the file name in the prompt to match.</p>
+<pre><code>You are a code reviewer. Review the attached trip_splitter.html for bugs. Check these six things, and for each say Found or Not found, with the line it is on:
+1. Inputs: are empty, negative, zero and duplicate values rejected?
+2. Money: do the shares add up to the total to the paisa?
+3. Ties: when two people are equal for top spender, what is shown?
+4. Missing data: what happens when a person who paid is removed, or there are no people?
+5. Untrusted text: is any user text put into the page as HTML?
+6. Secrets: is any key or password in the file?
+Do not fix anything. Only report.
+</code></pre>
+<p>Step 3 - Read the answer. Use the visualizer below. Tick what your AI reviewer reported, and what your own tests found, and see where the two overlap.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>Did the reviewer find all six? And did it say anything that was not true?</div>
+<p>Whatever it did, you can now tell, because you have your own results from the tests. If it found all six, that is a useful reviewer. If it missed one, your tests caught it. If it claimed a bug that is not there, you found that out by running the code.</p>
+<div class="lbl important"><span class="tag">Important</span>A reviewer's report is a list of claims. A test is evidence. Use the AI to widen what you look at, and use tests to decide what is true.</div>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>The reviewer's output was not checked here, so do not promise the class what it will find. Strong models often find most of the six. The lesson works whichever way it goes: if it finds all six, the point is that you still verified; if it misses some, the point is that tests found them.</div>
+<div class="lbl doubt"><span class="tag">Doubt by Learner (Optional)</span>"Can I just let the AI both review and fix?"</div>
+<p>You can, and it saves time. But keep the order: review, then you decide which findings are real, then fix one at a time with a checkpoint. A review that fixes as it goes gives you one big change you cannot read.</p>
+<section class="quiz" data-ans="B" data-exp="A review is an opinion about the code, and a test is evidence of how it behaves. A clean review is a reason to feel reasonably confident, not a reason to stop checking. Searching for an AI that finds something only adds noise, and a review does not replace tests."><div class="qhead"><span class="qnum">In-class quiz 5</span></div><div class="qbody"><p class="qtext">You ask an AI to review your code, and it reports no problems. What is the best next step?</p><div class="opts"><button class="opt" data-k="A"><span class="k">A</span><span>Ship the code, because an AI reviewer has already checked it for you</span></button><button class="opt" data-k="B"><span class="k">B</span><span>Run your own checks, because a test shows what really happens</span></button><button class="opt" data-k="C"><span class="k">C</span><span>Ask different AIs in turn until one of them reports a problem</span></button><button class="opt" data-k="D"><span class="k">D</span><span>Delete the tests, since the AI review has now replaced all of them</span></button></div><div class="verdict"><span class="vt"></span> <span class="vx"></span></div></div></section>
+<h2 id="section-8" data-label="Your turn and wrap-up" data-mins="9"><span class="secn">Section 8 &middot; 9 min</span>Your turn and wrap-up</h2>
+<p>Your turn. Add one feature to your fixed app, using every habit from today. The feature: some people do not share some expenses. For example, one friend did not eat at the dinner. Each expense gets a way to leave people out.</p>
+<p>Step 1 - Checkpoint first. Make sure everything is committed.</p>
+<p>Step 2 - Write a spec first. Four lines is enough. Here is a start. Finish it.</p>
+<pre><code>Feature: when adding an expense, I can untick people who do not share it.
+Rules: an expense must be shared by at least one person; ...
+Done when: ...
+</code></pre>
+<p>Step 3 - Add two of your own tests before you ask the AI. For example, an expense shared by only two of three people, and an expense with everyone unticked.</p>
+<p>Step 4 - Send the spec to the AI. Run all the tests from this class again, not only the new ones.</p>
+<p>Step 5 - Read the change with <code>git diff</code>. If anything broke that used to work, run <code>git restore .</code> and send a better bug report.</p>
+<p>Step 6 - When it passes, checkpoint with a message that says what the feature does.</p>
+<div class="lbl ask"><span class="tag">Ask Learners</span>Which of your own rules did the AI not guess? Which test caught it?</div>
+<p>What you now know. Vibe coding is fast and its risk is unstated rules. Habit one is a spec that puts rules in writing and ends with a line you can test. Habit two is a checkpoint before every AI change, so a bad change is one command to undo. Habit three is a review that combines a checklist, tests and, if you like, an AI reviewer, with the tests deciding what is true. The six questions to ask of AI-written code: inputs, money, ties, missing data, untrusted text, secrets.</p>
+<p>What you built. A working Trip Splitter, six bugs found by testing and fixed one by one with checkpoints, and a feature added with the full loop.</p>
+<p>Next class is the capstone. You will build a full app with a frontend and a backend and put it on the internet. You will use the same three habits at every stage: write a spec, checkpoint, test, and review. The security items you met today matter more there, because real keys live on the backend.</p>
+<h3>Fast-changing facts for this section</h3>
+<div class="lbl instructor"><span class="tag">Note for Instructor</span>Recheck these the week before you teach, and fix them in place.</div>
+<ul>
+<li>Cursor's Hobby plan: that it is still free with no card, the AI request limits, and the models available</li>
+<li>Cursor's menus, the Agent mode setting and its shortcut</li>
+<li>GitHub Copilot Free's monthly allowances, if you use it as the fallback</li>
+<li>Git's install steps for Windows</li>
+<li>That the class copy and reference copy still behave as the checks say, by running <code>instructor_check.py</code></li>
+</ul>
+<h3>Where these facts come from</h3>
+<table>
+<thead>
+<tr>
+<th>Fact</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cursor pricing and the free Hobby plan</td>
+<td>https://cursor.com/pricing</td>
+</tr>
+<tr>
+<td>A third-party summary of the Hobby plan, as of July 2026</td>
+<td>https://eastondev.com/blog/en/posts/ai/20260604-cursor-free-tier-guide/</td>
+</tr>
+<tr>
+<td>GitHub Copilot Free allowances</td>
+<td>https://docs.github.com/en/enterprise-cloud@latest/copilot/get-started/plans</td>
+</tr>
+<tr>
+<td>Git: install and basic commands</td>
+<td>https://git-scm.com/doc</td>
+</tr>
+<tr>
+<td>Why user text must not be inserted as HTML</td>
+<td>https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML</td>
+</tr>
+</tbody>
+</table></div>
+  </main>
+</div>
+
+<button class="theme" id="themeBtn" title="Switch light and dark" aria-label="Switch light and dark">&#9682;</button>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   0. theme
+   ============================================================ */
+try{
+  var saved=localStorage.getItem("c11-theme");
+  if(saved) document.documentElement.setAttribute("data-theme",saved);
+}catch(e){}
+document.getElementById("themeBtn").addEventListener("click",function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  if(!cur){
+    cur=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+  }
+  var next=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",next);
+  try{localStorage.setItem("c11-theme",next);}catch(e){}
+});
+
+/* ============================================================
+   1. content is pre-rendered at build time; bind the quizzes
+   ============================================================ */
+var host=document.getElementById("content");
+
+Array.prototype.slice.call(host.querySelectorAll(".quiz")).forEach(function(box){
+  var ans=box.dataset.ans, exp=box.dataset.exp;
+  var verdict=box.querySelector(".verdict");
+  var opts=Array.prototype.slice.call(box.querySelectorAll(".opt"));
+  opts.forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var correct=btn.dataset.k===ans;
+      opts.forEach(function(b){
+        b.disabled=true;
+        if(b.dataset.k===ans) b.classList.add("right");
+        else if(b===btn) b.classList.add("wrong");
+      });
+      verdict.className="verdict show "+(correct?"ok":"no");
+      verdict.querySelector(".vt").textContent=correct
+        ? "Correct. Answer "+ans+"."
+        : "Not that one. The answer is "+ans+".";
+      verdict.querySelector(".vx").textContent=exp;
+    });
+  });
+});
+
+/* ============================================================
+   4. helpers
+   ============================================================ */
+function el(tag,cls,html){
+  var n=document.createElement(tag);
+  if(cls)n.className=cls;
+  if(html!=null)n.innerHTML=html;
+  return n;
+}
+function viz(kicker,title,sub,bodyHTML){
+  var s=el("section","viz");
+  s.innerHTML='<div class="vhead"><div class="vk">'+kicker+'</div><h4>'+title+'</h4><p>'+sub+'</p></div>'+
+              '<div class="vbody">'+bodyHTML+'</div>';
+  return s;
+}
+// insert a node after the heading whose text starts with `prefix`
+function afterHeading(prefix,node){
+  var hs=host.querySelectorAll("h2,h3");
+  for(var i=0;i<hs.length;i++){
+    if(hs[i].textContent.trim().toLowerCase().indexOf(prefix.toLowerCase())===0){
+      var anchor=hs[i], next=anchor.nextElementSibling;
+      // slip past the first paragraph so the teaching line comes first
+      if(next&&next.tagName==="P") anchor=next;
+      anchor.after(node);
+      return true;
+    }
+  }
+  host.appendChild(node);
+  return false;
+}
+function fmtMoney(v){
+  if(v>=1000) return "$"+Math.round(v).toLocaleString();
+  if(v>=1) return "$"+v.toFixed(2);
+  return "$"+v.toFixed(4);
+}
+
+/* helpers shared by the Class 8 visualizers */
+function afterPara(fragment,node){
+  var ps=host.querySelectorAll("p,.lbl");
+  for(var i=0;i<ps.length;i++){
+    if(ps[i].textContent.indexOf(fragment)!==-1){ ps[i].after(node); return true; }
+  }
+  host.appendChild(node); return false;
+}
+function esc8(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function seg8(root,sel,items,cur,onPick){
+  root.querySelector(sel).innerHTML=items.map(function(t,i){
+    return '<button data-i="'+i+'"'+(i===cur?' class="on"':'')+'>'+esc8(t)+'</button>';
+  }).join("");
+  Array.prototype.slice.call(root.querySelectorAll(sel+" button")).forEach(function(b){
+    b.addEventListener("click",function(){onPick(+b.dataset.i);});
+  });
+}
+var CARD8='border:1px solid var(--rule-2);border-radius:10px;padding:12px 13px;background:var(--paper)';
+var KICK8='font:650 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;';
+
+/* ============================================================
+   VISUALIZER 1 - vague prompt versus spec
+   ============================================================ */
+(function(){
+  var D=[
+    {d:"Which amounts are valid?",s:"Written: greater than 0"},
+    {d:"Can two people share a name?",s:"Written: no, duplicates are rejected"},
+    {d:"How is money stored and shown?",s:"Written: 2 decimals, shares add up to the paisa"},
+    {d:"Who pays the extra paisa when a split is uneven?",s:null},
+    {d:"What does Top spender show in a tie?",s:null},
+    {d:"What if a person who paid is removed?",s:null},
+    {d:"Is user text ever shown as HTML?",s:"Written: never"},
+    {d:"Can a key or password sit in the file?",s:"Written: no"},
+    {d:"How will you know it is done?",s:"Written: net of balances shows 0.00"}
+  ];
+  var html=
+    '<div class="seg" id="e1M" style="margin-bottom:14px"></div>'+
+    '<div id="e1L" style="'+CARD8+'"></div>'+
+    '<div class="stats" id="e1Stats"></div>'+
+    '<div class="note" id="e1Note"></div>';
+  var v=viz("Visualizer 1","Which decisions did you make?",
+    "Switch between the two prompts. Each row is a rule the app has to follow, and the row says who decided it.",html);
+  afterPara("Use the visualizer below. Switch between a vague prompt",v);
+  var m=0;
+  function render(){
+    seg8(v,"#e1M",["Vague prompt","Spec prompt"],m,function(i){m=i;render();});
+    var decided=0;
+    v.querySelector("#e1L").innerHTML=D.map(function(x){
+      var you=(m===1&&x.s);
+      if(you) decided++;
+      return '<div style="display:flex;gap:10px;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dashed var(--rule-2);font-size:13.5px;line-height:1.5">'+
+        '<span style="color:var(--ink-2)">'+esc8(x.d)+'</span>'+
+        '<span style="flex:0 0 auto;max-width:48%;text-align:right;font:600 12px var(--sans);color:'+(you?'var(--accent)':'var(--amber)')+'">'+(you?esc8(x.s):'The AI guesses')+'</span></div>';
+    }).join("");
+    v.querySelector("#e1Stats").innerHTML=
+      '<div class="stat"><div class="sl">Decided by you</div><div class="sv a">'+decided+' of '+D.length+'</div></div>'+
+      '<div class="stat"><div class="sl">Left to a guess</div><div class="sv'+(D.length-decided?' w':' a')+'">'+(D.length-decided)+'</div></div>';
+    v.querySelector("#e1Note").textContent=m===0
+      ?"With one short sentence, every rule is a guess. The guesses may be fine. You cannot tell without testing."
+      :"The spec moved six rules into writing, and it gave you a line to test against. Three guesses remain, and they are the ones you decide in Section 5. A spec does not remove guessing. It shows you what is left.";
+  }
+  render();
+})();
+
+/* ============================================================
+   VISUALIZER 2 - Git checkpoints
+   ============================================================ */
+(function(){
+  var html=
+    '<div class="seg" style="margin-bottom:12px">'+
+      '<button id="e2Edit">Make your own edit</button>'+
+      '<button id="e2Ai">Ask the AI for a change</button>'+
+      '<button id="e2Commit" class="on">git commit</button>'+
+      '<button id="e2Restore">git restore .</button>'+
+    '</div>'+
+    '<div id="e2Out" style="'+CARD8+'"></div>'+
+    '<div class="stats" id="e2Stats"></div>'+
+    '<div class="note" id="e2Note"></div>';
+  var v=viz("Visualizer 2","Checkpoints in Git",
+    "Press the buttons in any order. Watch the history, and what is lost when you skip a checkpoint.",html);
+  afterPara("Use the visualizer below. Commit a change that works",v);
+  var commits=["Class copy of Trip Splitter"], edits=0, ai=0, msg="Start: one checkpoint, nothing uncommitted.";
+  function render(){
+    var h='';
+    if(edits+ai>0){
+      h+='<div style="padding:7px 10px;margin-bottom:6px;border:1px dashed var(--amber);border-radius:8px;font-size:13px;color:var(--amber)">Uncommitted: '+
+        (edits?edits+' of your edit'+(edits>1?'s':''):'')+(edits&&ai?' and ':'')+(ai?ai+' AI change'+(ai>1?'s':''):'')+'</div>';
+    }
+    h+=commits.slice().reverse().map(function(c,i){
+      return '<div style="display:flex;gap:10px;align-items:center;padding:7px 10px;margin-bottom:6px;border:1px solid '+(i===0?'var(--accent)':'var(--rule-2)')+';border-radius:8px;font-size:13.5px;color:var(--ink-2)">'+
+        '<code style="color:var(--accent)">'+(i===0?'HEAD':'')+'</code><span>'+esc8(c)+'</span></div>';
+    }).join("");
+    v.querySelector("#e2Out").innerHTML=h;
+    var dirty=edits+ai;
+    v.querySelector("#e2Stats").innerHTML=
+      '<div class="stat"><div class="sl">Checkpoints</div><div class="sv">'+commits.length+'</div></div>'+
+      '<div class="stat"><div class="sl">Uncommitted changes</div><div class="sv'+(dirty?' w':' a')+'">'+dirty+'</div></div>';
+    v.querySelector("#e2Note").textContent=msg;
+  }
+  v.querySelector("#e2Edit").addEventListener("click",function(){edits++;msg="You changed the file by hand. Nothing is saved in history yet.";render();});
+  v.querySelector("#e2Ai").addEventListener("click",function(){
+    ai++; msg=edits?"The AI changed the file on top of your uncommitted edits. If this goes wrong, restoring will also remove your edits.":"The AI changed the file. You can read it with git diff, and test it.";render();});
+  v.querySelector("#e2Commit").addEventListener("click",function(){
+    if(!(edits+ai)){msg="Nothing to commit. The folder already matches the last checkpoint.";render();return;}
+    commits.push(ai&&!edits?"Accepted AI change #"+commits.length:(ai?"Your edit and an AI change":"Your edit"));
+    edits=0;ai=0;msg="Saved. This is now the known-good point to return to.";render();});
+  v.querySelector("#e2Restore").addEventListener("click",function(){
+    if(!(edits+ai)){msg="Nothing to restore. The folder already matches the last checkpoint.";render();return;}
+    msg=edits&&ai?"Restored. The AI change is gone, and so are your own uncommitted edits. A checkpoint before the AI would have kept them.":"Restored to the last checkpoint in one command. The history did not change.";
+    edits=0;ai=0;render();});
+  render();
+})();
+
+/* ============================================================
+   VISUALIZER 3 - the test sheet
+   ============================================================ */
+(function(){
+  var T=[
+    {n:"Empty amount",a:"One person, an expense with the amount left empty.",bug:"Total spent: ₹NaN",ok:"Refuses the expense and says why.",cat:"Inputs",read:"Likely"},
+    {n:"Negative amount",a:"One person, an expense of -500.",bug:"Total spent: ₹-500.00",ok:"Refuses the expense and says why.",cat:"Inputs",read:"Likely"},
+    {n:"Blank and duplicate names",a:"Add a person with no name, then add Asha twice.",bug:"The blank name and both Ashas are added.",ok:"Refuses all three.",cat:"Inputs",read:"Likely"},
+    {n:"100 split three ways",a:"Asha, Rohan, Meera. Asha pays 100. Read the Net line.",bug:"Net of all balances: ₹0.01 (should be 0.00)",ok:"Net of all balances: ₹0.00",cat:"Money",read:"Unlikely"},
+    {n:"A tie for top spender",a:"Asha and Rohan each pay 500.",bug:"Top spender: Asha",ok:"Top spender: Asha and Rohan",cat:"Ties",read:"Maybe"},
+    {n:"Remove a person who paid",a:"Asha and Meera. Meera pays 100. Remove Meera.",bug:"The page stops updating. The console shows: Cannot read properties of undefined.",ok:"Refuses, with a short message.",cat:"Missing data",read:"Maybe"},
+    {n:"A name that is a tag",a:"Add a person named: an img tag with an onerror handler that turns the page red.",bug:"The page turns red. The name never appears as text.",ok:"The name is shown exactly as typed.",cat:"Untrusted text",read:"Likely"},
+    {n:"Search for sk_",a:"Search the file for sk_ in your editor.",bug:"Finds a key near the top of the script.",ok:"Finds nothing.",cat:"Secrets",read:"Yes"}
+  ];
+  var html=
+    '<div class="seg" id="e3S" style="flex-direction:column;align-items:stretch;margin-bottom:14px"></div>'+
+    '<div class="ctl two">'+
+      '<div id="e3Bug" style="'+CARD8+'"></div>'+
+      '<div id="e3Ok" style="'+CARD8+'"></div>'+
+    '</div>'+
+    '<div class="stats" id="e3Stats"></div>'+
+    '<div class="note">Six of the eight tests are quick to run and slow to find by reading. Run first, read second.</div>';
+  var v=viz("Visualizer 3","The test sheet",
+    "Pick a test. See what the class copy does, and what a correct app does.",html);
+  afterPara("Use the visualizer below. Pick a test and compare",v);
+  var cur=3;
+  function render(){
+    seg8(v,"#e3S",T.map(function(t,i){return (i+1)+". "+t.n;}),cur,function(i){cur=i;render();});
+    var t=T[cur];
+    v.querySelector("#e3Bug").innerHTML=
+      '<div style="'+KICK8+'color:var(--amber)">Class copy</div>'+
+      '<div style="font-size:13px;color:var(--ink-3);margin-bottom:6px">'+esc8(t.a)+'</div>'+
+      '<div style="font:500 13px var(--mono);color:var(--ink);word-break:break-word">'+esc8(t.bug)+'</div>';
+    v.querySelector("#e3Ok").innerHTML=
+      '<div style="'+KICK8+'color:var(--accent)">Correct app</div>'+
+      '<div style="font-size:13px;color:var(--ink-3);margin-bottom:6px">Same steps.</div>'+
+      '<div style="font:500 13px var(--mono);color:var(--ink);word-break:break-word">'+esc8(t.ok)+'</div>';
+    v.querySelector("#e3Stats").innerHTML=
+      '<div class="stat"><div class="sl">Checklist question</div><div class="sv" style="font-size:.95rem">'+esc8(t.cat)+'</div></div>'+
+      '<div class="stat"><div class="sl">Easy to spot by reading?</div><div class="sv'+(t.read==="Unlikely"?' w':' a')+'" style="font-size:.95rem">'+esc8(t.read)+'</div></div>';
+  }
+  render();
+})();
+
+/* ============================================================
+   VISUALIZER 4 - rounding each share versus splitting in paise
+   ============================================================ */
+(function(){
+  var html=
+    '<div class="ctl three">'+
+      '<div><label>Rupees <span class="v" id="e4Rv"></span></label><input type="range" id="e4R" min="10" max="500" value="100"></div>'+
+      '<div><label>Paise <span class="v" id="e4Pv"></span></label><input type="range" id="e4P" min="0" max="99" value="0"></div>'+
+      '<div><label>People <span class="v" id="e4Nv"></span></label><input type="range" id="e4N" min="2" max="7" value="3"></div>'+
+    '</div>'+
+    '<div class="ctl two">'+
+      '<div id="e4A" style="'+CARD8+'"></div>'+
+      '<div id="e4B" style="'+CARD8+'"></div>'+
+    '</div>'+
+    '<div class="stats" id="e4Stats"></div>'+
+    '<div class="note" id="e4Note"></div>';
+  var v=viz("Visualizer 4","Rounding every share, or splitting in paise",
+    "Set a total and a head count. The left card rounds each share on its own. The right card splits whole paise.",html);
+  afterPara("Use the visualizer below. Set a total and a head count",v);
+  var R=v.querySelector("#e4R"),P=v.querySelector("#e4P"),N=v.querySelector("#e4N");
+  function rs(p){return (p/100).toFixed(2);}
+  function chips(arr,tone){
+    return '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+arr.map(function(x){
+      return '<span style="font:600 12.5px var(--mono);padding:5px 8px;border-radius:7px;border:1px solid '+tone+';color:var(--ink)">'+rs(x)+'</span>';}).join("")+'</div>';
+  }
+  function render(){
+    var r=+R.value,p=+P.value,n=+N.value, tot=r*100+p;
+    v.querySelector("#e4Rv").textContent=r; v.querySelector("#e4Pv").textContent=p; v.querySelector("#e4Nv").textContent=n;
+    var sh=Math.round(tot/n), nSum=sh*n, nDiff=tot-nSum;
+    var base=Math.floor(tot/n), extra=tot-base*n, arr=[], i;
+    for(i=0;i<n;i++) arr.push(base+(i<extra?1:0));
+    var naive=[]; for(i=0;i<n;i++) naive.push(sh);
+    v.querySelector("#e4A").innerHTML=
+      '<div style="'+KICK8+'color:var(--amber)">Round each share</div>'+
+      '<div style="font-size:13px;color:var(--ink-3)">Total ₹'+rs(tot)+', every share ₹'+rs(sh)+'</div>'+chips(naive,'var(--amber)')+
+      '<div style="font-size:13px;color:var(--ink-2);margin-top:8px">Shares add up to ₹'+rs(nSum)+'</div>';
+    v.querySelector("#e4B").innerHTML=
+      '<div style="'+KICK8+'color:var(--accent)">Split in whole paise</div>'+
+      '<div style="font-size:13px;color:var(--ink-3)">Total ₹'+rs(tot)+', the first '+extra+' pay one extra paisa</div>'+chips(arr,'var(--accent)')+
+      '<div style="font-size:13px;color:var(--ink-2);margin-top:8px">Shares add up to ₹'+rs(arr.reduce(function(a,b){return a+b;},0))+'</div>';
+    var d=(nDiff<0?'-':'')+rs(Math.abs(nDiff));
+    v.querySelector("#e4Stats").innerHTML=
+      '<div class="stat"><div class="sl">Rounded shares: gap</div><div class="sv'+(nDiff?' w':' a')+'">'+(nDiff?'₹'+d:'₹0.00')+'</div></div>'+
+      '<div class="stat"><div class="sl">Whole paise: gap</div><div class="sv a">₹0.00</div></div>'+
+      '<div class="stat"><div class="sl">Extra paise to place</div><div class="sv">'+extra+'</div></div>';
+    v.querySelector("#e4Note").textContent=nDiff||extra
+      ?"When the total does not divide evenly, rounding every share can leave the shares above or below the total. Splitting in whole paise always adds up, but someone has to take the extra paisa. That choice is yours, and it belongs in the spec."
+      :"This one divides evenly, so both methods agree. Move a slider until a gap appears.";
+  }
+  [R,P,N].forEach(function(el){el.addEventListener("input",render);});
+  render();
+})();
+
+/* ============================================================
+   VISUALIZER 5 - user text as HTML or as text
+   ============================================================ */
+(function(){
+  var PRE=[
+    {t:"Asha",l:"Asha"},
+    {t:"Rohan <b>(bold)</b>",l:"A tag"},
+    {t:'<img src=x onerror="document.body.style.background=\'tomato\'">',l:"The test 7 name"}
+  ];
+  var html=
+    '<div class="ctl two">'+
+      '<div><label>Name typed by a user</label><input type="text" id="e5T" style="width:100%"></div>'+
+      '<div><label>Try one</label><div class="seg" id="e5P"></div></div>'+
+    '</div>'+
+    '<div class="ctl two">'+
+      '<div id="e5A" style="'+CARD8+'"></div>'+
+      '<div id="e5B" style="'+CARD8+'"></div>'+
+    '</div>'+
+    '<div class="stats" id="e5Stats"></div>'+
+    '<div class="note">This panel only analyses the text. It never builds the element, so nothing here can run.</div>';
+  var v=viz("Visualizer 5","The same name, two ways of showing it",
+    "Type a name, or pick one. See what each version of the app does with it.",html);
+  afterPara("Use the visualizer below. Type a name and compare",v);
+  var inp=v.querySelector("#e5T"); inp.value=PRE[0].t;
+  function render(){
+    seg8(v,"#e5P",PRE.map(function(p){return p.l;}),-1,function(i){inp.value=PRE[i].t;render();});
+    var s=inp.value, tags=s.match(/<\s*[a-zA-Z][a-zA-Z0-9]*[^>]*>/g)||[], ev=/\son[a-z]+\s*=/i.test(s)&&tags.length>0;
+    var a;
+    if(!tags.length) a='The text has no tag in it, so it looks the same either way.';
+    else if(!ev) a='The browser reads '+tags.length+' tag'+(tags.length>1?'s':'')+' and builds an element. The page structure was changed by what a user typed.';
+    else a='The browser builds an element, and its event handler runs as code. This is the hole.';
+    v.querySelector("#e5A").innerHTML=
+      '<div style="'+KICK8+'color:var(--amber)">Class copy: innerHTML</div>'+
+      '<div style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">'+esc8(a)+'</div>';
+    v.querySelector("#e5B").innerHTML=
+      '<div style="'+KICK8+'color:var(--accent)">Fixed: shown as text</div>'+
+      '<div style="font:500 13px var(--mono);color:var(--ink);word-break:break-word;margin-bottom:6px">'+esc8(s||"(empty)")+'</div>'+
+      '<div style="font-size:13px;color:var(--ink-3)">Shown exactly as typed.</div>';
+    v.querySelector("#e5Stats").innerHTML=
+      '<div class="stat"><div class="sl">Class copy runs code?</div><div class="sv'+(ev?' w':' a')+'" style="font-size:.95rem">'+(ev?'Yes':'No')+'</div></div>'+
+      '<div class="stat"><div class="sl">Fixed runs code?</div><div class="sv a" style="font-size:.95rem">No</div></div>';
+  }
+  inp.addEventListener("input",render);
+  render();
+})();
+
+/* ============================================================
+   VISUALIZER 6 - reviewer scorecard
+   ============================================================ */
+(function(){
+  var Q=["Inputs","Money","Ties","Missing data","Untrusted text","Secrets"];
+  var html=
+    '<div id="e6T" style="display:grid;grid-template-columns:1fr auto auto;gap:8px 18px;align-items:center;margin-bottom:14px"></div>'+
+    '<div id="e6Out" style="'+CARD8+'"></div>'+
+    '<div class="stats" id="e6Stats"></div>'+
+    '<div class="note">A claim from a reviewer is not yet a finding. A failing test is. Anything neither one caught is where real bugs hide.</div>';
+  var v=viz("Visualizer 6","What found what?",
+    "After you run both, tick what your AI reviewer reported and what your own tests found.",html);
+  afterPara("Use the visualizer below. Tick what your AI reviewer",v);
+  var rev={},tst={};
+  function render(){
+    var h='<div></div><div style="font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">AI reviewer</div><div style="font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">My tests</div>';
+    Q.forEach(function(q,i){
+      h+='<div style="font-size:13.5px;color:var(--ink-2)">'+(i+1)+'. '+esc8(q)+'</div>'+
+         '<input type="checkbox" data-r="'+i+'"'+(rev[i]?' checked':'')+'><input type="checkbox" data-t="'+i+'"'+(tst[i]?' checked':'')+'>';
+    });
+    v.querySelector("#e6T").innerHTML=h;
+    Array.prototype.slice.call(v.querySelectorAll("#e6T input")).forEach(function(c){
+      c.addEventListener("change",function(){
+        if(c.dataset.r!==undefined) rev[c.dataset.r]=c.checked; else tst[c.dataset.t]=c.checked;
+        render();});
+    });
+    var both=0,ro=0,to=0,none=0,nr=0,nt=0;
+    Q.forEach(function(q,i){
+      var a=!!rev[i],b=!!tst[i]; if(a)nr++; if(b)nt++;
+      if(a&&b)both++; else if(a)ro++; else if(b)to++; else none++;
+    });
+    var msg;
+    if(nr+nt===0) msg="Tick the boxes to see where the reviewer and your tests agree.";
+    else if(none>0) msg=none+' of six problems were found by neither. Run the missing tests before you trust the code.';
+    else if(ro>0) msg=ro+' problem'+(ro>1?'s were':' was')+' reported by the reviewer but not tested yet. Write the test, so it counts as evidence.';
+    else if(to>0) msg=to+' problem'+(to>1?'s were':' was')+' found only by your tests. That is what the tests are for.';
+    else msg="Both found all six. You still have evidence, not only an opinion.";
+    v.querySelector("#e6Out").innerHTML=
+      '<div style="'+KICK8+'color:var(--accent)">Coverage</div><div style="font-size:14px;line-height:1.6;color:var(--ink-2)">'+esc8(msg)+'</div>';
+    v.querySelector("#e6Stats").innerHTML=
+      '<div class="stat"><div class="sl">Reviewer reported</div><div class="sv">'+nr+' of 6</div></div>'+
+      '<div class="stat"><div class="sl">Tests found</div><div class="sv a">'+nt+' of 6</div></div>'+
+      '<div class="stat"><div class="sl">Found by neither</div><div class="sv'+(none&&(nr+nt)?' w':' a')+'">'+(nr+nt?none:'-')+'</div></div>';
+  }
+  render();
+})();
+/* ============================================================
+   5. table of contents and scroll state
+   ============================================================ */
+(function(){
+  var hs=Array.prototype.slice.call(host.querySelectorAll("h2"));
+  var toc=document.getElementById("toc");
+
+  hs.forEach(function(h,i){
+    if(!h.id) h.id="s"+i;
+    var label=h.dataset.label||h.textContent.trim();
+    var mins=h.dataset.mins||"";
+    var a=document.createElement("a");
+    a.href="#"+h.id;
+    a.innerHTML=label+(mins?'<span class="mins">'+mins+'m</span>':'');
+    toc.appendChild(a);
+  });
+
+  var links=Array.prototype.slice.call(toc.querySelectorAll("a"));
+  if("IntersectionObserver" in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        links.forEach(function(l){
+          l.classList.toggle("active",l.getAttribute("href")==="#"+e.target.id);
+        });
+      });
+    },{rootMargin:"-10% 0px -80% 0px"});
+    hs.forEach(function(h){io.observe(h);});
+  }
+})();
+
+})();
+</script>
+</body>
+</html>
